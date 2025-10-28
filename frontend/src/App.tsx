@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import { fetchParticipantId } from "./api/participant";
+// App.tsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ExplanationPage } from "./pages/ExplanationPage";
+import { ConsentPage } from "./pages/ConsentPage";
+import { ExperimentTopPage } from "./pages/ExperimentTopPage";
+import { ImagePage } from "./pages/ImagePage";
 
 function App() {
-  const [participantId, setParticipantId] = useState<string>("");
-
-  useEffect(() => {
-    const getParticipantId = async () => {
-      const id = await fetchParticipantId();
-      setParticipantId(id);
-    };
-    getParticipantId();
-  }, []);
-
   return (
-    <div>
-      <h1>Participant ID: {participantId}</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ExplanationPage />} />
+        <Route path="/consent" element={<ConsentPage />} />
+        <Route path="/experiment" element={<ExperimentTopPage />} />
+        <Route path="/image/:index" element={<ImagePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
