@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { imageSets } from "../data/images";
+import { fetchParticipantId } from "../api/participant";
 
 export const ConsentPage = () => {
   const navigate = useNavigate();
@@ -8,15 +10,24 @@ export const ConsentPage = () => {
   const [age, setAge] = useState("");
   const [clothingKnowledge, setClothingKnowledge] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !age || !gender || !clothingKnowledge) {
       alert("すべての項目を入力してください");
-      return; // 未入力があればここで処理を止める
+      return;
     }
 
-    console.log({ name, gender, age, clothingKnowledge });
-    // 後でバックエンド送信処理を追加
-    navigate("/practice");
+    const participantID = await fetchParticipantId();
+
+    // セット（提示単位）ごとにランダム化
+    const shuffledOrder = [...imageSets.keys()].sort(() => Math.random() - 0.5);
+
+    sessionStorage.setItem("imageOrder", JSON.stringify(shuffledOrder));
+    sessionStorage.setItem("participantID", participantID);
+
+    console.log("参加者ID:", participantID);
+    console.log("提示順序:", shuffledOrder);
+
+    navigate("/experiment");
   };
 
   return (
@@ -39,7 +50,9 @@ export const ConsentPage = () => {
       <label>
         性別:
         <select value={gender} onChange={(e) => setGender(e.target.value)}>
-          <option value="" disabled>選択してください</option>
+          <option value="" disabled>
+            選択してください
+          </option>
           <option value="male">男性</option>
           <option value="female">女性</option>
         </select>
@@ -51,7 +64,9 @@ export const ConsentPage = () => {
           value={clothingKnowledge}
           onChange={(e) => setClothingKnowledge(e.target.value)}
         >
-          <option value="" disabled>選択してください</option>
+          <option value="" disabled>
+            選択してください
+          </option>
           <option value="無">無</option>
           <option value="有">有</option>
         </select>
